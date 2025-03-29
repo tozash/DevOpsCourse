@@ -1,4 +1,8 @@
-# DevOps Project
+# DevOpsCourse
+
+dev ops course repository
+
+## About
 
 A simple Flask web application demonstrating DevOps practices including CI/CD, containerization, and infrastructure as code.
 
@@ -96,4 +100,4 @@ To set up the CI/CD pipeline:
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details. 
+This project is licensed under the MIT License - see the LICENSE file for details.
