@@ -35,17 +35,45 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-    #   # Optional: build step (if your app has a build command, e.g., React frontend)
-    #   - name: Build
-    #     run: npm run build
-
       # Deploy to Heroku
       - name: Deploy to Heroku
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+          HEROKU_EMAIL: ${{ secrets.HEROKU_EMAIL }}
         run: |
+          # Check if HEROKU_API_KEY is set
+          if [ -z "$HEROKU_API_KEY" ]; then
+            echo "Error: HEROKU_API_KEY is not set. Please add it as a GitHub secret."
+            exit 1
+          fi
+
+          # Check if HEROKU_EMAIL is set
+          if [ -z "$HEROKU_EMAIL" ]; then
+            echo "Error: HEROKU_EMAIL is not set. Please add it as a GitHub secret."
+            exit 1
+          fi
+
+          # Install Heroku CLI
           npm install -g heroku
-          echo "machine api.heroku.com login $HEROKU_API_KEY password" > ~/.netrc
+          
+          # Create ~/.netrc entries for both api.heroku.com and git.heroku.com
+          echo "machine api.heroku.com" >> ~/.netrc
+          echo "  login $HEROKU_EMAIL" >> ~/.netrc
+          echo "  password $HEROKU_API_KEY" >> ~/.netrc
+
+          echo "machine git.heroku.com" >> ~/.netrc
+          echo "  login $HEROKU_EMAIL" >> ~/.netrc
+          echo "  password $HEROKU_API_KEY" >> ~/.netrc
+
           chmod 600 ~/.netrc
+
+          # Verify authentication
+          heroku auth:whoami || {
+            echo "Error: Authentication failed. Please check your HEROKU_API_KEY and HEROKU_EMAIL."
+            echo "To get a new API key, run 'heroku auth:token' locally after logging in with 'heroku login'."
+            exit 1
+          }
+
+          # Set up Heroku remote and deploy
           heroku git:remote -a devops-course
           git push heroku main
