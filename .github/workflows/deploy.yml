@@ -45,6 +45,7 @@ jobs:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         run: |
           npm install -g heroku
-          heroku login --api-key $HEROKU_API_KEY
+          echo "machine api.heroku.com login $HEROKU_API_KEY password" > ~/.netrc
+          chmod 600 ~/.netrc
           heroku git:remote -a devops-course
           git push heroku main
