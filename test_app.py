@@ -10,4 +10,5 @@ def client():
 def test_home_page(client):
     response = client.get('/')
     assert response.status_code == 200
-    assert b'Welcome to DevOps Project' in response.data 
+    assert b'Welcome to DevOps Project' in response.data
+    assert b'Current server time:' in response.data 
